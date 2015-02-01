@@ -23,6 +23,7 @@
         android:layout_height="wrap_content"
         android:text="@string/button_estimation"
         android:id="@+id/button_estimation"
+        android:onClick="openPathLossEstimationActivity"
         android:layout_marginBottom="153dp"
         android:layout_alignParentBottom="true"
         android:layout_alignRight="@+id/button_measurements"

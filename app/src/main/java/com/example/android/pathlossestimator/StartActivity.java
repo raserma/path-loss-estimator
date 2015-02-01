@@ -46,7 +46,7 @@ public class StartActivity extends Activity {
     }
 
     public void openPathLossEstimationActivity(View view){
-        Intent intentEstimationScreen = new Intent(this, MeasuringDataActivity.class);
+        Intent intentEstimationScreen = new Intent(this, PathLossEstimationActivity.class);
         startActivity(intentEstimationScreen);
     }
 }

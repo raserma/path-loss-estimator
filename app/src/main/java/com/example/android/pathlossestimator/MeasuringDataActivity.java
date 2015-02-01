@@ -142,19 +142,19 @@ public class MeasuringDataActivity extends Activity {
         Intent dbmanager = new Intent(this,AndroidDatabaseManager.class);
         startActivity(dbmanager);
 
-        /*mNameBssidApSelected = measdbh.getBssidNameDB(mIdBssidApSelected);
-        // If "start", means used has moved away 1m
-        if (buttonStart.getText().equals(this.getString(R.string.button_start))){
-            mRssTotal = 0;
-            mMetersAway++;
-            mIterations = 0;
-            buttonStart.setText(R.string.button_next);
-        }
-
-        // WiFi Scanner
-        registerReceiver(mReceiverWifi, new
-                IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
-        mMainWifi.startScan();*/
+//        mNameBssidApSelected = measdbh.getBssidNameDB(mIdBssidApSelected);
+//        // If "start", means used has moved away 1m
+//        if (buttonStart.getText().equals(this.getString(R.string.button_start))){
+//            mRssTotal = 0;
+//            mMetersAway++;
+//            mIterations = 0;
+//            buttonStart.setText(R.string.button_next);
+//        }
+//
+//        // WiFi Scanner
+//        registerReceiver(mReceiverWifi, new
+//                IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+//        mMainWifi.startScan();
 
     }
 

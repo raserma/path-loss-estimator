@@ -4,6 +4,7 @@
       <w>bssid</w>
       <w>bssids</w>
       <w>measdbh</w>
+      <w>pathlossestimator</w>
     </words>
   </dictionary>
 </component>

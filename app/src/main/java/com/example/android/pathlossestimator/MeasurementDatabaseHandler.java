@@ -94,13 +94,22 @@ public class MeasurementDatabaseHandler extends SQLiteOpenHelper {
         db.execSQL(CREATE_MEASUREMENTS_TABLE);
     }
 
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        // Drop older table if existed
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_BSSIDS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MEASUREMENTS);
+
+        // Create tables again
+        onCreate(db);
+    }
+
     /**
-     * getBssidNameDB
+     * getBssidNameDB (int id_BSSID)
      * Gets MAC/BSSID address which corresponds to id_BSSID
      *
      * @param id_BSSID Identification number of currently used AP MAC/BSSID
      */
-    public String getBssidNameDB(int id_BSSID) {
+    public String getBssidNameDB (int id_BSSID) {
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_BSSIDS, new String[]{KEY_BSSID_NAME}, KEY_BSSID_ID + "=?",
@@ -115,7 +124,17 @@ public class MeasurementDatabaseHandler extends SQLiteOpenHelper {
 
     }
 
-    public void addMeasurementDB(int id_BSSID, int value_RSS, int value_distance) {
+    /**
+     * addMeasurementDB (int id_BSSID, int value_RSS, int value_distance)
+     *
+     * Adds measurement sets to "measurements" table
+     *
+     * @param id_BSSID Identification number of currently used AP MAC/BSSID
+     * @param value_RSS RSS value gathered from AP for a determined value_distance
+     * @param value_distance meters away from where value_RSS was measured
+     */
+
+    public void addMeasurementDB (int id_BSSID, int value_RSS, int value_distance) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues measurementValues = new ContentValues();
         measurementValues.put(KEY_BSSID, id_BSSID);
@@ -127,20 +146,63 @@ public class MeasurementDatabaseHandler extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Drop older table if existed
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_BSSIDS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MEASUREMENTS);
+    /**
+     * Reads the RSS array which corresponds to id_BSSID from measurements table
+     * @param id_BSSID Identification number of currently used AP MAC/BSSID
+     * @return rssArray
+     */
 
-        // Create tables again
-        onCreate(db);
+
+    public double [] getRSSValuesDB (int id_BSSID){
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_MEASUREMENTS, new String[]{KEY_RSS},
+                KEY_BSSID + "=?",
+                new String[]{String.valueOf(id_BSSID)}, null, null, null, null);
+
+        double [] rssArray = new double[cursor.getCount()];
+        // There is at least one register
+        if (cursor.moveToFirst()) {
+            for (int i = 0; i<cursor.getCount(); i++){
+                rssArray[i] = cursor.getDouble(0);
+                cursor.moveToNext();
+            }
+        }
+
+        return rssArray;
+    }
+
+    /**
+     * Reads the distance array which corresponds to id_BSSID from measurements table
+     * @param id_BSSID Identification number of currently used AP MAC/BSSID
+     * @return distanceArray
+     */
+
+    public double [] getDistanceValuesDB (int id_BSSID){
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_MEASUREMENTS, new String[]{KEY_DISTANCE},
+                KEY_BSSID + "=?",
+                new String[]{String.valueOf(id_BSSID)}, null, null, null, null);
+
+        double [] distanceArray = new double[cursor.getCount()];
+        // There is at least one register
+        if (cursor.moveToFirst()) {
+            for (int i = 0; i<cursor.getCount(); i++){
+                distanceArray[i] = cursor.getDouble(0);
+                cursor.moveToNext();
+            }
+        }
+
+        return distanceArray;
     }
 
 
 
 
-
-
+    /** USED TO SEE DATABASE */
     public ArrayList<Cursor> getData(String Query) {
         //get writable database
         SQLiteDatabase sqlDB = this.getWritableDatabase();
