@@ -177,7 +177,7 @@ public class MeasuringDataActivity extends Activity {
         Toast.makeText(getApplicationContext(), mRssMean + " dBms",
                 Toast.LENGTH_LONG).show();
 
-        // Insert the pair value RSS-distance of selected AP to database
+        // Store the pair value RSS-distance of selected AP to database
         measdbh.addMeasurementDB(mIdBssidApSelected, mRssMean, mMetersAway);
     }
 

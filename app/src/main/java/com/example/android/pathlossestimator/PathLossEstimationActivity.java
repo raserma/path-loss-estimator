@@ -10,6 +10,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 
+import org.apache.commons.math3.stat.regression.OLSMultipleLinearRegression;
+
 
 public class PathLossEstimationActivity extends Activity {
     private int mIdBssidApSelected;
@@ -98,11 +100,47 @@ public class PathLossEstimationActivity extends Activity {
 
     public void startPolynomialRegression(View view){
 
-        // We get set of data
+        // We get set of data from database
         mRssValuesDB = measdbh.getRSSValuesDB (getmIdBssidApSelected());
         mDistanceValuesDB = measdbh.getDistanceValuesDB(getmIdBssidApSelected());
 
-        // Curve fitting using 4th order polynomial regression
+        /** Curve fitting using 4th order polynomial regression **/
+
+
+        // Creation of input data: y[] and X[][] - NOTE: I should consider using an external matrix
+        // library
+
+        int k = 4; // Polynomial degree is k - 1 = 3th degree
+        int n = mRssValuesDB.length; // n = number of observations
+
+        double y[] = mDistanceValuesDB;
+
+        double x0 [] = new double[n];
+        double x1 [] = new double[n];
+        double x2 [] = new double[n];
+        double x3 [] = new double[n];
+        for (int i = 0; i < n; i++){
+            x0[i] = Math.pow(mRssValuesDB[i], 0);
+            x1[i] = Math.pow(mRssValuesDB[i], 1);
+            x2[i] = Math.pow(mRssValuesDB[i], 2);
+            x3[i] = Math.pow(mRssValuesDB[i], 3);
+        }
+        double X[][] = new double[n][k];
+        for(int j = 0; j < k; j++){
+            for (int i = 0; i < n; i++) {
+                X[i][0] = x0[i];
+                X[i][1] = x1[i];
+                X[i][2] = x2[i];
+                X[i][3] = x3[i];
+            }
+        }
+
+        // Using OLSMultipleLinearRegression library
+        OLSMultipleLinearRegression ols = new OLSMultipleLinearRegression();
+        ols.newSampleData(y, X);
+        ols.setNoIntercept(true);
+        ols.newSampleData(y, X);
+        double[] coefficients = ols.estimateRegressionParameters();
 
         // Store it on database
 
