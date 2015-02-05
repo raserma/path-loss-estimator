@@ -17,6 +17,7 @@ public class MeasurementDatabaseHandler extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "measurements";
     private static final String TABLE_BSSIDS = "bssids";
     private static final String TABLE_MEASUREMENTS = "measurements";
+    private static final String TABLE_COEFFICIENTS = "coefficients";
 
     // bssids table columns names
     private static final String KEY_BSSID_ID = "id";
@@ -27,6 +28,11 @@ public class MeasurementDatabaseHandler extends SQLiteOpenHelper {
     private static final String KEY_BSSID = "id_bssid";
     private static final String KEY_RSS = "value_rss";
     private static final String KEY_DISTANCE = "value_distance";
+
+    // coefficients table column names
+    private static final String KEY_COEFFICIENT_ID = "id";
+    //private static final String KEY_BSSID = "id_bssid";
+    private static final String KEY_COEFFICIENT_VALUE = "value_coefficient";
 
 
 
@@ -92,12 +98,20 @@ public class MeasurementDatabaseHandler extends SQLiteOpenHelper {
                 + KEY_RSS + " INTEGER,"
                 + KEY_DISTANCE + " INTEGER" + ")";
         db.execSQL(CREATE_MEASUREMENTS_TABLE);
+
+        // create coefficients table
+        String CREATE_COEFFICIENTS_TABLE = "CREATE TABLE " + TABLE_COEFFICIENTS + "("
+                + KEY_COEFFICIENT_ID + " INTEGER PRIMARY KEY,"
+                + KEY_BSSID + " INTEGER,"
+                + KEY_COEFFICIENT_VALUE + " DOUBLE" + ")";
+        db.execSQL(CREATE_COEFFICIENTS_TABLE);
     }
 
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // Drop older table if existed
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_BSSIDS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MEASUREMENTS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_COEFFICIENTS);
 
         // Create tables again
         onCreate(db);
@@ -135,6 +149,11 @@ public class MeasurementDatabaseHandler extends SQLiteOpenHelper {
      */
 
     public void addMeasurementDB (int id_BSSID, int value_RSS, int value_distance) {
+
+        // If id_BSSID is already in table, update measurements
+
+        // If id_BSSID is not in table, insert measurements
+
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues measurementValues = new ContentValues();
         measurementValues.put(KEY_BSSID, id_BSSID);
@@ -169,7 +188,7 @@ public class MeasurementDatabaseHandler extends SQLiteOpenHelper {
                 cursor.moveToNext();
             }
         }
-
+        db.close();
         return rssArray;
     }
 
@@ -195,9 +214,41 @@ public class MeasurementDatabaseHandler extends SQLiteOpenHelper {
                 cursor.moveToNext();
             }
         }
-
+        db.close();
         return distanceArray;
     }
+
+
+    public void addCoefficientsDB (int id_BSSID, double [] coefficients) {
+
+        // If id_BSSID is already in table, update coefficients
+
+        // If id_BSSID is not in table, insert coefficients
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues coefficientValues = new ContentValues();
+
+        coefficientValues.put(KEY_BSSID, id_BSSID);
+        coefficientValues.put(KEY_COEFFICIENT_VALUE, coefficients[0]);
+        db.insert(TABLE_COEFFICIENTS, null, coefficientValues);
+
+        coefficientValues.put(KEY_BSSID, id_BSSID);
+        coefficientValues.put(KEY_COEFFICIENT_VALUE, coefficients[1]);
+        db.insert(TABLE_COEFFICIENTS, null, coefficientValues);
+
+
+        coefficientValues.put(KEY_BSSID, id_BSSID);
+        coefficientValues.put(KEY_COEFFICIENT_VALUE, coefficients[2]);
+        db.insert(TABLE_COEFFICIENTS, null, coefficientValues);
+
+
+        coefficientValues.put(KEY_BSSID, id_BSSID);
+        coefficientValues.put(KEY_COEFFICIENT_VALUE, coefficients[3]);
+        db.insert(TABLE_COEFFICIENTS, null, coefficientValues);
+
+        db.close();
+    }
+
 
 
 

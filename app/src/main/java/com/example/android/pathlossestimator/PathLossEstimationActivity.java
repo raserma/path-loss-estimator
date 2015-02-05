@@ -140,10 +140,15 @@ public class PathLossEstimationActivity extends Activity {
         ols.newSampleData(y, X);
         ols.setNoIntercept(true);
         ols.newSampleData(y, X);
+        // distance = a + bx + cx² + dx³ --> coefficients = [a b c d]
         double[] coefficients = ols.estimateRegressionParameters();
 
-        // Store it on database
 
+        // Show them in the screen
+
+
+        // Store them on database
+        measdbh.addCoefficientsDB(mIdBssidApSelected, coefficients);
 
     }
 
